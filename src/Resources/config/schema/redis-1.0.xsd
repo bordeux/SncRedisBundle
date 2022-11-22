@@ -51,6 +51,7 @@
         <xsd:attribute name="iterable-multibulk" type="xsd:boolean" />
         <xsd:attribute name="throw-errors" type="xsd:boolean" />
         <xsd:attribute name="serialization" type="phpredis-serialization-type" />
+        <xsd:attribute name="compression" type="phpredis-compression-type" />
         <xsd:attribute name="profile" type="client-profile" />
         <xsd:attribute name="cluster" type="xsd:string" />
         <xsd:attribute name="prefix" type="xsd:string" />
@@ -66,6 +67,17 @@
             <xsd:enumeration value="igbinary" />
         </xsd:restriction>
     </xsd:simpleType>
+
+
+    <xsd:simpleType name="phpredis-compression-type">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="default" />
+            <xsd:enumeration value="none" />
+            <xsd:enumeration value="lz4" />
+            <xsd:enumeration value="lzf" />
+        </xsd:restriction>
+    </xsd:simpleType>
+
 
     <xsd:simpleType name="phpredis-slave-failover-type">
         <xsd:restriction base="xsd:string">

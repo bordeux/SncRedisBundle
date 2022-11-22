@@ -177,6 +177,10 @@ class PhpredisClientFactory
             $client->setOption(Redis::OPT_SERIALIZER, $this->loadSerializationType($options['serialization']));
         }
 
+        if (isset($options['compression'])) {
+            $client->setOption(Redis::OPT_COMPRESSION, $this->loadCompressionType($options['compression']));
+        }
+
         return $client;
     }
 
@@ -203,6 +207,36 @@ class PhpredisClientFactory
         }
 
         throw new InvalidConfigurationException(sprintf('%s in not a valid serializer. Valid serializers: %s', $type, implode(', ', array_keys($types))));
+    }
+
+    /**
+     * @return Redis::COMPRESSION_*
+     *
+     * @throws InvalidConfigurationException
+     */
+    private function loadCompressionType(string $type): int
+    {
+        $types = [
+            'default' => Redis::COMPRESSION_NONE,
+            'none' => Redis::COMPRESSION_NONE
+        ];
+
+        $nonStandardCompressions = [
+            'lz4' => 'Redis::COMPRESSION_LZ4',
+            'lzf' => 'Redis::COMPRESSION_LZF'
+        ];
+
+        foreach ($nonStandardCompressions as $name => $constantName) {
+            if (defined($constantName)) {
+                $types[$name] = constant($constantName);
+            }
+        }
+
+        if (array_key_exists($type, $types)) {
+            return $types[$type];
+        }
+
+        throw new InvalidConfigurationException(sprintf('%s in not a valid compression type. Valid compression types: %s', $type, implode(', ', array_keys($types))));
     }
 
     private function loadSlaveFailoverType(string $type): int
